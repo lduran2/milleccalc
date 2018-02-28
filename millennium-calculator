@@ -1,0 +1,199 @@
+/* vim: set syntax=javascript : */
+
+/*
+   Millennium Calculator (in JavaScript)
+   by: https://github.com/lduran2
+   started: 2018-02-26
+   The main script for the Millennium Calculator.
+ */
+(function () {
+	let htmlns = 'http://www.w3.org/1999/xhtml'
+	let head = document.head;
+	let yellowBackground = document.createElementNS(htmlns, 'link');
+	setAttributes(yellowBackground, {
+		'rel': 'stylesheet',
+		'type': 'text/css',
+		'href': 'yellow-background-style'
+	});
+	head.appendChild(yellowBackground);
+
+	let body = document.body;
+	let calculatorDiv = document.createElementNS(htmlns, 'div');
+	calculatorDiv.id = 'calculator-box';
+
+	let resultDiv = createTextElement('div', '0.');
+	resultDiv.id = 'result-box';
+	let standby = true;
+
+	let numbersDiv = document.createElement('div');
+	numbersDiv.id = 'numbers-col';
+
+	let clearDiv = document.createElement('div');
+	clearDiv.id = 'clear-row';
+	let clearButtons = [
+		{
+			'text': 'CA',
+			'func': function () {
+				resultDiv.firstChild.nodeValue = '0.';
+				standby = true;
+			}
+		},
+		{
+			'text': 'CE',
+			'func': function () {
+				resultDiv.firstChild.nodeValue = '0.';
+				standby = true;
+			}
+		},
+		{
+			'text': 'Back',
+			'func': function () {
+				if (!standby) {
+					let resultText = resultDiv.firstChild;
+					resultText.nodeValue = resultText.nodeValue.substring(resultText.nodeValue.length - 1);
+				}
+			}
+		}
+	];
+
+	
+
+	let memoryDiv = document.createElement('div');
+	memoryDiv.id = 'memory-col';
+	let memory = 0;
+	let memoryButtons = [
+		{
+			'text': 'MC',
+			'func': function () {
+				memory = 0;
+			}
+		},
+		{
+			'text': 'MR',
+			'func': function () {
+				resultDiv.firstChild.nodeValue = memory;
+			}
+		},
+		{
+			'text': 'MS',
+			'func': function () {
+				memory = Number.parseFloat(resultDiv.firstChild.nodeValue);
+			}
+		},
+		{
+			'text': 'M+',
+			'func': function () {
+				memory += Number.parseFloat(resultDiv.firstChild.nodeValue);
+			}
+		}
+	];
+
+	let digitDiv = document.createElement('div');
+	digitDiv.id = 'digit-grid';
+	let digitButtons = [
+		[
+			{
+				'text': '7',
+				'func': addDigit
+			},
+			{
+				'text': '8',
+				'func': addDigit
+			},
+			{
+				'text': '9',
+				'func': addDigit
+			}
+		],
+		[
+			{
+				'text': '4',
+				'func': addDigit
+			},
+			{
+				'text': '5',
+				'func': addDigit
+			},
+			{
+				'text': '6',
+				'func': addDigit
+			}
+		],
+		[
+			{
+				'text': '1',
+				'func': addDigit
+			},
+			{
+				'text': '2',
+				'func': addDigit
+			},
+			{
+				'text': '3',
+				'func': addDigit
+			}
+		],
+		[
+			{
+				'text': '0',
+				'func': addDigit
+			},
+			{
+				'text': '+/-',
+				'func': addDigit
+			},
+			{
+				'text': '.',
+				'func': addDigit
+			}
+		]
+	];
+
+	appendButtons(clearButtons, clearDiv);
+	appendButtons(memoryButtons, memoryDiv);
+	appendButtons(digitButtons[0], digitDiv);
+
+	numbersDiv.append(clearDiv);
+	numbersDiv.append(memoryDiv);
+	numbersDiv.append(digitDiv);
+
+	calculatorDiv.append(resultDiv);
+	calculatorDiv.append(numbersDiv);
+	body.insertBefore(calculatorDiv, body.lastChild);
+
+	function createTextElement(tagName, text) {
+		let element = document.createElementNS(htmlns, tagName);
+		element.appendChild(document.createTextNode(text));
+		return element;
+	}
+
+	function setAttributes(element, attributes) {
+		let k;
+		let keys = Object.keys(attributes);
+		let values = Object.values(attributes);
+		for (k = (keys.length - 1); k >= 0; --k) {
+			element.setAttribute(keys[k], values[k]);
+		}
+	}
+
+	function appendButtons(buttons, parent) {
+		let lastChild = null;
+		for (let k = (buttons.length - 1); k >= 0; --k) {
+			let newChild = createTextElement('button', buttons[k].text);
+			newChild.onclick = buttons[k].func;
+			parent.insertBefore(newChild, lastChild);
+			lastChild = newChild;
+		}
+	}
+
+	function addDigit() {
+		let digit = this.firstChild.nodeValue;
+		if (standby) {
+			resultDiv.firstChild.nodeValue = digit;
+			standby = false;
+		}
+		else {
+			resultDiv.firstChild.nodeValue += digit;
+		}
+	}
+})();

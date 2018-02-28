@@ -1,0 +1,43 @@
+/* vim: set syntax=css : */
+
+/*
+   Yellow Background Stylesheet
+   by: https://github.com/lduran2
+   started: 2018-02-26
+   The yellow background stylesheet based off of the Windows 3.0 Calculator.
+*/
+
+#calculator-box, #numbers-col, #operators-col, #memory-col {
+	float: left;
+}
+
+#result-box, button {
+	border: 1px solid;
+	background: white;
+}
+
+button {
+	border-radius: 5px/7px;
+}
+
+#result-box {
+	color: black;
+	text-align: right;
+}
+
+#clear-row button {
+	color: red;
+}
+
+#memory-col {
+	clear: right;
+}
+
+#memory-col button {
+	display: block;
+	color: magenta;
+}
+
+#digit-grid button {
+	color: blue;
+}

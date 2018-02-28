@@ -1,0 +1,17 @@
+<?xml version='1.0'?>
+<!DOCTYPE ht:html>
+<!--
+   Index for Millennium Calculator (in JavaScript)
+   by: https://github.com/lduran2
+   dated: 2018-02
+   Loads the Millennium Calculator.
+-->
+<ht:html xmlns:ht='http://www.w3.org/1999/xhtml' xml:lang='en'>
+	<ht:head>
+		<ht:title>Millennium Calculator (in JavaScript)</ht:title>
+	</ht:head>
+	<ht:body>
+		<ht:h1>Millennium Calculator (in JavaScript)</ht:h1>
+		<ht:script type='text/javascript' src='millennium-calculator'/>
+	</ht:body>
+</ht:html>
