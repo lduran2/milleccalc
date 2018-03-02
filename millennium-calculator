@@ -13,7 +13,7 @@
 	setAttributes(yellowBackground, {
 		'rel': 'stylesheet',
 		'type': 'text/css',
-		'href': 'yellow-background-style'
+		'href': 'yellow-background.css'
 	});
 	head.appendChild(yellowBackground);
 
@@ -48,15 +48,17 @@
 		{
 			'text': 'Back',
 			'func': function () {
+				let resultText = resultDiv.firstChild;
 				if (!standby) {
-					let resultText = resultDiv.firstChild;
-					resultText.nodeValue = resultText.nodeValue.substring(resultText.nodeValue.length - 1);
+					resultText.nodeValue = resultText.nodeValue.substring(0, resultText.nodeValue.length - 1);
+				}
+				if (resultText.nodeValue.length == 0) {
+					resultText.nodeValue = '0.';
+					standby = true;
 				}
 			}
 		}
 	];
-
-	
 
 	let memoryDiv = document.createElement('div');
 	memoryDiv.id = 'memory-col';
@@ -66,96 +68,120 @@
 			'text': 'MC',
 			'func': function () {
 				memory = 0;
+				standby = true;
 			}
 		},
 		{
 			'text': 'MR',
 			'func': function () {
 				resultDiv.firstChild.nodeValue = memory;
+				standby = true;
 			}
 		},
 		{
 			'text': 'MS',
 			'func': function () {
 				memory = Number.parseFloat(resultDiv.firstChild.nodeValue);
+				standby = true;
 			}
 		},
 		{
 			'text': 'M+',
 			'func': function () {
 				memory += Number.parseFloat(resultDiv.firstChild.nodeValue);
+				standby = true;
 			}
 		}
 	];
 
-	let digitDiv = document.createElement('div');
-	digitDiv.id = 'digit-grid';
+	let digitGridDiv = document.createElement('div');
+	digitGridDiv.id = 'digit-grid';
 	let digitButtons = [
 		[
 			{
 				'text': '7',
-				'func': addDigit
+				'func': typeDigit
 			},
 			{
 				'text': '8',
-				'func': addDigit
+				'func': typeDigit
 			},
 			{
 				'text': '9',
-				'func': addDigit
+				'func': typeDigit
 			}
 		],
 		[
 			{
 				'text': '4',
-				'func': addDigit
+				'func': typeDigit
 			},
 			{
 				'text': '5',
-				'func': addDigit
+				'func': typeDigit
 			},
 			{
 				'text': '6',
-				'func': addDigit
+				'func': typeDigit
 			}
 		],
 		[
 			{
 				'text': '1',
-				'func': addDigit
+				'func': typeDigit
 			},
 			{
 				'text': '2',
-				'func': addDigit
+				'func': typeDigit
 			},
 			{
 				'text': '3',
-				'func': addDigit
+				'func': typeDigit
 			}
 		],
 		[
 			{
 				'text': '0',
-				'func': addDigit
+				'func': typeDigit
 			},
 			{
 				'text': '+/-',
-				'func': addDigit
+				'func': function () {
+					let resultText = resultDiv.firstChild;
+					if (!standby) {
+						if (resultText.nodeValue.startsWith('-')) {
+							resultText.nodeValue = resultText.nodeValue.substring(1);
+						}
+						else {
+							resultText.nodeValue = '-' + resultText.nodeValue;
+						}
+					}
+				}
 			},
 			{
 				'text': '.',
-				'func': addDigit
+				'func': function () {
+					let resultText = resultDiv.firstChild;
+					let dot = this.firstChild.nodeValue;
+					if (standby) {
+						standby = false;
+					}
+					else if (resultText.nodeValue.indexOf(dot) < 0) {
+						resultText.nodeValue += dot;
+					}
+				}
 			}
 		]
 	];
 
+	appendButtonGrid(digitButtons, digitGridDiv, 'digit-row');
+
 	appendButtons(clearButtons, clearDiv);
 	appendButtons(memoryButtons, memoryDiv);
-	appendButtons(digitButtons[0], digitDiv);
 
 	numbersDiv.append(clearDiv);
 	numbersDiv.append(memoryDiv);
-	numbersDiv.append(digitDiv);
+	numbersDiv.append(digitGridDiv);
 
 	calculatorDiv.append(resultDiv);
 	calculatorDiv.append(numbersDiv);
@@ -177,8 +203,9 @@
 	}
 
 	function appendButtons(buttons, parent) {
+		let k;
 		let lastChild = null;
-		for (let k = (buttons.length - 1); k >= 0; --k) {
+		for (k = (buttons.length - 1); k >= 0; --k) {
 			let newChild = createTextElement('button', buttons[k].text);
 			newChild.onclick = buttons[k].func;
 			parent.insertBefore(newChild, lastChild);
@@ -186,7 +213,20 @@
 		}
 	}
 
-	function addDigit() {
+	function appendButtonGrid(buttons, parent, rowClassName) {
+		let k;
+		let rowDiv;
+		let lastChild = null;
+		for (k = (buttons.length - 1); k >= 0; --k) {
+			rowDiv = document.createElement('div');
+			rowDiv.className = rowClassName;
+			appendButtons(buttons[k], rowDiv);
+			parent.insertBefore(rowDiv, lastChild);
+			lastChild = rowDiv;
+		}
+	}
+
+	function typeDigit() {
 		let digit = this.firstChild.nodeValue;
 		if (standby) {
 			resultDiv.firstChild.nodeValue = digit;

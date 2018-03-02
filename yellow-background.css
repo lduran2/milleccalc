@@ -36,11 +36,11 @@ button {
 	color: magenta;
 }
 
-[class='digit-row'] /* find out why this class doesn't work, probably something about dynamic classes */  {
+.digit-row /* find out why this class doesn't work, probably something about dynamic classes */  {
 	display: block;
 	clear: left;
 }
 
-[class='digit-row'] button {
+.digit-row button {
 	color: blue;
 }
